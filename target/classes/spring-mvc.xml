@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+			 xmlns:beans="http://www.springframework.org/schema/beans"
+			 xmlns:context="http://www.springframework.org/schema/context"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xsi:schemaLocation="http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd">
+<!--위에서 보면 xmlns(디폴트 네임 스페이스) 사용할건데 xsi:schemaLocation 에 있는 경로에서 가져와 사용할것이다.
+	지금은 mvc 프레임 워크가 디폴트 값이라서 Bean 객체를 만들때 <beans:bean 이렇게 해서 만들어야 한다.
+	만약에 beans 가 xmlns(디폴트) 라면 <beans 만 사용하고 만들수 있다.-->
+
+
+
+
+	<annotation-driven /> <!--어노테이션을 사용하기 위해 지정해줘야한다.-->
+
+	<default-servlet-handler />
+	<!--DispatcherSerlvet이 처리하지 못한 요청을 DefaultSerlvet에게 넘겨주는 역할을 하는 핸들러
+   *.css와 같은 컨트롤러에 매핑되어 있지 않은 URL 요청은 최종적으로 Default Servlet에 전달되어 처리하는 역할-->
+	<!--사용이유
+  		DispatcherServlet의 매핑이 "/"로 지정하면 JSP를 제외한 모든 요청이 DispatcherServlet으로 가기 때문에,
+ 		WAS가 제공하는 Default Servlet이 *.html, *.css같은 요청을 처리할 수 없게됨.
+ 		Default ServletHandler는 이런 요청들을 Default Servlet에게 전달해주는 Handler이다.
+  		요청 URL에 매핑되는 컨트롤러가 존재하지 않을 때, 404응답 대신,
+		DefaultServlet이 해당 요청 URL을 처리하도록 함.-->
+		
+	<view-resolvers><!-- 컨트롤러에 요청이 들어오면 jsp 파일에 처리 내용이라던지 jsp 파일에 이름을 return 할수도 있다. 그러면 그 파일이
+	선택 되어서 그 파일을 return 해줄수 있는데 이때 스프링을 이용해서 view-resolvers 설정을 읽어드려서 알아서 경로를 만들어 줄수 있다.
+	즉 ex) 메소드에 return  "/WEB-INF/view/hello.jsp" 라고 해야지 저 경로에 있는 jsp 파일을 보여주는데 
+	이렇게 설정 해놓으면 hello 만 적어놔도 위에 경로에 있는 jsp 가 return 된다.-->
+		<jsp prefix="/WEB-INF/view/books/" suffix=".jsp" />
+	</view-resolvers><!--view 해석기 , 분석기 같은 느낌이 라고 보면된다. 컨트롤러에서 받은 것을 view-resolvers 를 통해서 view 로 넘겨준다.-->
+	<resources location="/fileUpload/upload/" mapping="/path/**"></resources> <!--location 업로드 한 위치 -->
+	<!--사진을 가지고 올라면 꼭 이 resources 를해줘야 한다 정적리소스 최상위에서 fileUpload에 upload 에 있는 파일을 /path/파일 이름을 입력하면 이미지를 불러올 수 있다.-->
+	
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+	</beans:bean>
+	<!-- <beans:bean class="org.exam.controller.HelloController"></beans:bean>
+	<beans:bean class="org.exam.controller.CalculatorController"></beans:bean> -->
+	<!--컨트롤러로 사용할 클래스를 Bean 객체 등록 -->
+	
+	<!-- <context:component-scan base-package="org.exam.controller"></context:component-scan> -->
+	<!--이 패키지 하위에 있는 모든 클래스를 뒤져서 컴포넌트를 스캔해라-->
+	<!--즉 @Component, @Controller, @Service, @Repository 이런 어노테이션이 붙어있는 모든 클래스 들을 자동으로 Bean 으로 등록해라 라는 뜻이다.-->
+</beans:beans>
